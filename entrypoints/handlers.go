@@ -4,12 +4,21 @@ import (
 	"encoding/json"
 	"net/http"
 	"personal-page-back/domain"
-
-	"github.com/gorilla/mux"
 )
 
+const (
+	contentTypeHeader = "Content-Type"
+	corsHeader        = "Access-Control-Allow-Origin"
+)
+
+func setHeaders(w http.ResponseWriter) {
+	w.Header().Set(contentTypeHeader, "application/json")
+	w.Header().Set(corsHeader, "http://localhost:3000")
+
+}
+
 func GetSkills(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeaders(w)
 
 	skills := domain.GetSkills()
 
@@ -18,12 +27,14 @@ func GetSkills(w http.ResponseWriter, req *http.Request) {
 
 func GetSkill(w http.ResponseWriter, req *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json")
+	setHeaders(w)
 
-	vars := mux.Vars(req)
-	value, _ := vars["id"]
+	//vars := mux.Vars(req)
+	//value, _ := vars["id"]
+	prefix := req.FormValue("prefix")
+	println(prefix)
 
-	skills := domain.GetSkillsStartingWith(value)
+	skills := domain.GetSkillsStartingWith(prefix)
 
 	json.NewEncoder(w).Encode(skills)
 }

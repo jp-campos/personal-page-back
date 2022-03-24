@@ -31,3 +31,11 @@ func (f *firebaseAdapter) GetSkills() []domain.Skill {
 		},
 	}
 }
+
+func (f *firebaseAdapter) IncrementNewSkill(s domain.Skill) {
+
+}
+
+func (f *firebaseAdapter) IncrementSkill(s domain.Skill) {
+
+}
