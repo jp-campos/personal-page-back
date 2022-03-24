@@ -20,7 +20,7 @@ func setHeaders(w http.ResponseWriter) {
 func GetSkills(w http.ResponseWriter, req *http.Request) {
 	setHeaders(w)
 
-	skills := domain.GetSkills()
+	skills := domain.GetSkills(req.Context())
 
 	json.NewEncoder(w).Encode(skills)
 }
@@ -34,7 +34,7 @@ func GetSkill(w http.ResponseWriter, req *http.Request) {
 	prefix := req.FormValue("prefix")
 	println(prefix)
 
-	skills := domain.GetSkillsStartingWith(prefix)
+	skills := domain.GetSkillsStartingWith(req.Context(), prefix)
 
 	json.NewEncoder(w).Encode(skills)
 }

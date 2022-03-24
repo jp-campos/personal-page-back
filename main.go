@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
+	"log"
 	"net/http"
 	"personal-page-back/domain"
 	"personal-page-back/entrypoints"
 	"personal-page-back/infrastructure"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 func initRouter() *mux.Router {
@@ -18,9 +21,18 @@ func initRouter() *mux.Router {
 	return r
 }
 
-func main() {
+func initFirebase() {
 
-	domain.InitRepository(infrastructure.NewFirebaseAdapter("url"))
+}
+
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	ctx := context.Background()
+
+	domain.InitRepository(infrastructure.NewFirebaseAdapter(ctx))
 
 	r := initRouter()
 	http.ListenAndServe(":8080", r)

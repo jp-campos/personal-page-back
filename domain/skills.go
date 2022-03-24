@@ -1,10 +1,12 @@
 package domain
 
+import "context"
+
 type Skill struct {
-	Name  string `json:"name"`
-	Count int    `json:"count"`
+	Name  string  `json:"name"`
+	Count float64 `json:"count"`
 }
 
 type SkillGateWay interface {
-	GetSkills() []Skill
+	GetSkills(context.Context) []Skill
 }
