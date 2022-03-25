@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"strings"
 )
 
@@ -21,7 +20,6 @@ func GetSkills(ctx context.Context) []Skill {
 func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 
 	allSkills := repository.GetSkills(ctx)
-	fmt.Printf("Size in usecase %v \n", len(allSkills))
 	filteredSkills := make([]Skill, 0)
 
 	for _, e := range allSkills {
@@ -37,4 +35,18 @@ func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 	}
 
 	return filteredSkills
+}
+
+func IncrementSkill(ctx context.Context, name string) error {
+
+	skill := repository.GetSkillByName(ctx, name)
+	var err error
+	if skill == nil {
+		//TODO: Agregar a colección de extras
+	} else {
+		skill.Count++
+		err = repository.UpdateSkill(ctx, skill)
+
+	}
+	return err
 }

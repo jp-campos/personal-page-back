@@ -9,4 +9,6 @@ type Skill struct {
 
 type SkillGateWay interface {
 	GetSkills(context.Context) []Skill
+	UpdateSkill(context.Context, *Skill) error
+	GetSkillByName(context.Context, string) *Skill
 }

@@ -28,11 +28,7 @@ func GetSkills(w http.ResponseWriter, req *http.Request) {
 func GetSkill(w http.ResponseWriter, req *http.Request) {
 
 	setHeaders(w)
-
-	//vars := mux.Vars(req)
-	//value, _ := vars["id"]
 	prefix := req.FormValue("prefix")
-	println(prefix)
 
 	skills := domain.GetSkillsStartingWith(req.Context(), prefix)
 
@@ -40,5 +36,10 @@ func GetSkill(w http.ResponseWriter, req *http.Request) {
 }
 
 func PostSkill(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte("posteo"))
+
+	m := make(map[string]string)
+	json.NewDecoder(req.Body).Decode(&m)
+
+	domain.IncrementSkill(req.Context(), m["skill"])
+
 }

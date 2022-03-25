@@ -10,7 +10,10 @@ import (
 	"google.golang.org/api/option"
 )
 
-const ProjectIdKey = "FIREBASE_PROJECT_ID"
+const (
+	ProjectIdKey     = "FIREBASE_PROJECT_ID"
+	skillsCollection = "/skills/"
+)
 
 type firebaseAdapter struct {
 	client *db.Client
@@ -45,16 +48,33 @@ func (f *firebaseAdapter) GetSkills(ctx context.Context) []domain.Skill {
 
 	m := make(firebaseSkills)
 
-	f.client.NewRef("/skills").Get(ctx, &m)
+	f.client.NewRef(skillsCollection).Get(ctx, &m)
 
 	return mapToSkillArray(m)
 }
 
-func (f *firebaseAdapter) IncrementNewSkill(s domain.Skill) {
+func (f *firebaseAdapter) GetSkillByName(ctx context.Context, name string) *domain.Skill {
+
+	m := make(map[string]interface{})
+
+	f.client.NewRef(skillsCollection+name).Get(ctx, &m)
+
+	if m == nil {
+		return nil
+	} else {
+		skill := mapSingleSkill(m)
+		return &skill
+	}
 
 }
 
-func (f *firebaseAdapter) IncrementSkill(s domain.Skill) {
+func (f *firebaseAdapter) UpdateSkill(ctx context.Context, s *domain.Skill) error {
+
+	err := f.client.NewRef(skillsCollection+s.Name).Set(ctx, s)
+	return err
+}
+
+func (f *firebaseAdapter) IncrementSkill(ctx context.Context, s domain.Skill) {
 
 }
 
@@ -63,11 +83,16 @@ func mapToSkillArray(values firebaseSkills) []domain.Skill {
 
 	for _, v := range values {
 
-		name := v["name"]
-		count := v["count"]
-
-		array = append(array, domain.Skill{Name: name.(string), Count: count.(float64)})
+		skill := mapSingleSkill(v)
+		array = append(array, skill)
 	}
 
 	return array
+}
+
+func mapSingleSkill(value map[string]interface{}) domain.Skill {
+
+	name := value["name"]
+	count := value["count"]
+	return domain.Skill{Name: name.(string), Count: count.(float64)}
 }
