@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	ProjectIdKey     = "FIREBASE_PROJECT_ID"
-	skillsCollection = "/skills/"
+	ProjectIdKey                 = "FIREBASE_PROJECT_ID"
+	skillsCollection             = "/skills/"
+	unclassifiedSkillsCollection = "/unclassified-skills/"
 )
 
 type firebaseAdapter struct {
@@ -54,28 +55,37 @@ func (f *firebaseAdapter) GetSkills(ctx context.Context) []domain.Skill {
 }
 
 func (f *firebaseAdapter) GetSkillByName(ctx context.Context, name string) *domain.Skill {
+	return f.getSkillInCollection(ctx, name, skillsCollection)
+}
+
+func (f *firebaseAdapter) GetUnclassifiedSkillByName(ctx context.Context, name string) *domain.Skill {
+	return f.getSkillInCollection(ctx, name, unclassifiedSkillsCollection)
+}
+
+func (f *firebaseAdapter) UpdateSkill(ctx context.Context, s *domain.Skill) error {
+	return f.client.NewRef(skillsCollection+s.Name).Set(ctx, s)
+}
+
+func (f *firebaseAdapter) UpdateUnclassifiedSkill(ctx context.Context, s *domain.Skill) error {
+	return f.client.NewRef(unclassifiedSkillsCollection+s.Name).Set(ctx, s)
+
+}
+
+func (f *firebaseAdapter) CreateUnclassifiedSkill(ctx context.Context, s domain.Skill) error {
+	return f.client.NewRef(unclassifiedSkillsCollection+s.Name).Set(ctx, s)
+}
+
+func (f *firebaseAdapter) getSkillInCollection(ctx context.Context, name, collection string) *domain.Skill {
 
 	m := make(map[string]interface{})
+	f.client.NewRef(collection+name).Get(ctx, &m)
 
-	f.client.NewRef(skillsCollection+name).Get(ctx, &m)
-
-	if m == nil {
+	if m == nil || len(m) == 0 {
 		return nil
 	} else {
 		skill := mapSingleSkill(m)
 		return &skill
 	}
-
-}
-
-func (f *firebaseAdapter) UpdateSkill(ctx context.Context, s *domain.Skill) error {
-
-	err := f.client.NewRef(skillsCollection+s.Name).Set(ctx, s)
-	return err
-}
-
-func (f *firebaseAdapter) IncrementSkill(ctx context.Context, s domain.Skill) {
-
 }
 
 func mapToSkillArray(values firebaseSkills) []domain.Skill {

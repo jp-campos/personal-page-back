@@ -14,15 +14,11 @@ import (
 
 func initRouter() *mux.Router {
 	r := mux.NewRouter()
-
-	r.HandleFunc("/skills", entrypoints.GetSkill).Queries("prefix", "{prefix}").Methods(http.MethodGet)
+	r.PathPrefix("/").HandlerFunc(entrypoints.Options).Methods(http.MethodOptions)
+	r.HandleFunc("/skills", entrypoints.GetSkillsWithPrefix).Queries("prefix", "{prefix}").Methods(http.MethodGet)
 	r.HandleFunc("/skills", entrypoints.GetSkills).Methods(http.MethodGet)
 	r.HandleFunc("/skill", entrypoints.PostSkill).Methods(http.MethodPost)
 	return r
-}
-
-func initFirebase() {
-
 }
 
 func main() {
