@@ -36,33 +36,34 @@ func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 	return filteredSkills
 }
 
-func IncrementSkill(ctx context.Context, name string) error {
+func IncrementSkill(ctx context.Context, name string) (Skill, error) {
 
 	skill := skillRepo.GetSkillByName(ctx, name)
 
 	var err error
 	if skill == nil {
-		incrementUnclassifiedSkill(ctx, name)
+		return incrementUnclassifiedSkill(ctx, name)
 	} else {
 		skill.Count++
 		err = skillRepo.UpdateSkill(ctx, skill)
-
+		return *skill, err
 	}
-	return err
+
 }
 
-func incrementUnclassifiedSkill(ctx context.Context, name string) {
+func incrementUnclassifiedSkill(ctx context.Context, name string) (Skill, error) {
 
 	upperCaseName := strings.ToUpper(name)
 	skill := skillRepo.GetUnclassifiedSkillByName(ctx, upperCaseName)
 
+	var err error
 	if skill == nil {
 		newSkill := Skill{Name: upperCaseName, Count: 1}
-		skillRepo.CreateUnclassifiedSkill(ctx, newSkill)
+		err = skillRepo.CreateUnclassifiedSkill(ctx, newSkill)
 
 	} else {
 		skill.Count++
-		skillRepo.UpdateUnclassifiedSkill(ctx, skill)
+		err = skillRepo.UpdateUnclassifiedSkill(ctx, skill)
 	}
-
+	return *skill, err
 }

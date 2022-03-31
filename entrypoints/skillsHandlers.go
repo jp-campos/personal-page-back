@@ -50,5 +50,11 @@ func PostSkill(w http.ResponseWriter, req *http.Request) {
 	m := make(map[string]string)
 	json.NewDecoder(req.Body).Decode(&m)
 
-	domain.IncrementSkill(req.Context(), m["skill"])
+	s, err := domain.IncrementSkill(req.Context(), m["skill"])
+
+	if err != nil {
+		w.WriteHeader(500)
+	} else {
+		json.NewEncoder(w).Encode(s)
+	}
 }
