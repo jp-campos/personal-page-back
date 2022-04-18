@@ -1,4 +1,4 @@
-.serviceAccountKey.json
+serviceAccountKey.json
 .env
 .DS_Store
 *.[56789ao]
