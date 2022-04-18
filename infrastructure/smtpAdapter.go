@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"net/smtp"
 	"personal-page-back/domain"
+	"sync"
 )
+
+var wg sync.WaitGroup
 
 type SmtpAdapter struct {
 	hostName, from, password string
@@ -18,16 +21,23 @@ func NewSmtpAdapter(hostName, from, password string) (s SmtpAdapter) {
 }
 
 func (s SmtpAdapter) SendEmail(email domain.Email) {
+	msg := fmt.Sprintf("To:motitaromero123@hotmail.com\r\n"+
+		"Subject:Información confidencial\r\n"+
+		"\r\n"+
+		"%s \r\n", email.Body)
+	byteMsg := []byte(msg)
 
-	tempMsg := []byte("To:motitaromero123@hotmail.com\r\n" +
-	"Subject:Información confidencial\r\n" +
-	"\r\n" +
-	"Test message\r\n")
-	err := smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{"motitaromero123@hotmail.com"}, tempMsg)
-	err = smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{"champyjp99@hotmail.com"}, tempMsg)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
+	wg.Add(2)
+	go func() {
+		err := smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{"jp.campos99@hotmail.com"}, byteMsg)
+		if err != nil {
+			fmt.Println(err)
+		}
+		wg.Done()
+	}()
+	go func() {
+		smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{"champyjp99@hotmail.com"}, byteMsg)
+		wg.Done()
+	}()
+	wg.Wait()
 }
