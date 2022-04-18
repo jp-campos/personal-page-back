@@ -21,23 +21,15 @@ func NewSmtpAdapter(hostName, from, password string) (s SmtpAdapter) {
 }
 
 func (s SmtpAdapter) SendEmail(email domain.Email) {
-	msg := fmt.Sprintf("To:motitaromero123@hotmail.com\r\n"+
-		"Subject:Información confidencial\r\n"+
+	msg := fmt.Sprintf("To: %s\r\n"+
+		"Subject:%s\r\n"+
 		"\r\n"+
-		"%s \r\n", email.Body)
+		"%s \r\n", email.To, email.Subject, email.Body)
 	byteMsg := []byte(msg)
 
-	wg.Add(2)
-	go func() {
-		err := smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{"jp.campos99@hotmail.com"}, byteMsg)
-		if err != nil {
-			fmt.Println(err)
-		}
-		wg.Done()
-	}()
-	go func() {
-		smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{"champyjp99@hotmail.com"}, byteMsg)
-		wg.Done()
-	}()
-	wg.Wait()
+	err := smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{email.To}, byteMsg)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
