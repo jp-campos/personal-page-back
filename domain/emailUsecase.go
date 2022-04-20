@@ -20,7 +20,6 @@ func InitEmailRepository(repo EmailGateWay) {
 func SendMail(ctx context.Context, email Email) {
 
 	wg.Add(2)
-
 	//Send email to self
 	go func() {
 

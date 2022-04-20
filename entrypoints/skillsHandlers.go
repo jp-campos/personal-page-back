@@ -21,12 +21,6 @@ const (
 
 var allowedHeaders = [...]string{"Authorization", "Content-Type", "Accept", "Origin", "User-Agent"}
 
-func setHeaders(w http.ResponseWriter) {
-	w.Header().Set(contentTypeHeader, "application/json")
-	w.Header().Set(corsOrigin, "*")
-
-}
-
 func GetSkills(w http.ResponseWriter, req *http.Request) {
 	setHeaders(w)
 

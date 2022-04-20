@@ -2,6 +2,11 @@ package entrypoints
 
 import "net/http"
 
+func setHeaders(w http.ResponseWriter) {
+	w.Header().Set(contentTypeHeader, "application/json")
+	w.Header().Set(corsOrigin, "*")
+
+}
 func Options(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add(allowedCorsMethods, http.MethodGet)
 	w.Header().Add(allowedCorsMethods, http.MethodPost)
