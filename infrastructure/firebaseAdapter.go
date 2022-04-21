@@ -3,7 +3,10 @@ package infrastructure
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"personal-page-back/domain"
+	"strings"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/db"
@@ -23,8 +26,9 @@ type firebaseAdapter struct {
 type firebaseSkills map[string]map[string]interface{}
 
 func NewFirebaseAdapter(ctx context.Context) *firebaseAdapter {
-
-	opt := option.WithCredentialsFile("serviceAccountKey.json")
+	fileName := "serviceAccountKey.json"
+	replaceSecretsServiceAccout(fileName)
+	opt := option.WithCredentialsFile(fileName)
 
 	conf := &firebase.Config{
 		DatabaseURL: "https://personal-page-6d1ac-default-rtdb.firebaseio.com/"}
@@ -105,4 +109,23 @@ func mapSingleSkill(value map[string]interface{}) domain.Skill {
 	name := value["name"]
 	count := value["count"]
 	return domain.Skill{Name: name.(string), Count: count.(float64)}
+}
+
+func replaceSecretsServiceAccout(fileName string) {
+
+	read, err := ioutil.ReadFile(fileName)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	privateKeyReplace := "${privateKey}"
+	privateKeyEnvKey := "PRIVATE_KEY"
+	newFileText := strings.Replace(string(read), privateKeyReplace, os.Getenv(privateKeyEnvKey), 1)
+
+	err = ioutil.WriteFile(fileName, []byte(newFileText), 0)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 }
