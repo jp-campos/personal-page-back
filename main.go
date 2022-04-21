@@ -36,6 +36,8 @@ func main() {
 	password := os.Getenv("SMTP_PASSWORD")
 	domain.InitEmailRepository(infrastructure.NewSmtpAdapter(hostName, senderMail, password))
 	r := initRouter()
-	http.ListenAndServe(":8080", r)
+
+	port := os.Getenv("PORT")
+	http.ListenAndServe(port, r)
 
 }
