@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"sync"
 )
@@ -18,7 +19,7 @@ func InitEmailRepository(repo EmailGateWay) {
 }
 
 func SendMail(ctx context.Context, email Email) {
-
+	fmt.Println("Posting email usecase")
 	wg.Add(2)
 	//Send email to self
 	go func() {

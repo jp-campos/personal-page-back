@@ -2,11 +2,13 @@ package entrypoints
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"personal-page-back/domain"
 )
 
 func PostEmail(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("Post email handler")
 	ctx := req.Context()
 	setHeaders(w)
 

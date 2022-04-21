@@ -15,12 +15,13 @@ type SmtpAdapter struct {
 }
 
 func NewSmtpAdapter(hostName, from, password string) (s SmtpAdapter) {
-	fmt.Println(hostName, from, password)
+	fmt.Println("SMTP created with", hostName, from)
 	auth := smtp.PlainAuth("", from, password, hostName)
 	return SmtpAdapter{auth: auth, hostName: hostName, from: from, password: password}
 }
 
 func (s SmtpAdapter) SendEmail(email domain.Email) {
+	fmt.Println("Send email in adapter")
 	msg := fmt.Sprintf("To: %s\r\n"+
 		"Subject:%s\r\n"+
 		"\r\n"+
