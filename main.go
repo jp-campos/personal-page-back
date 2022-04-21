@@ -29,15 +29,15 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 	ctx := context.Background()
-
 	domain.InitSkillRepository(infrastructure.NewFirebaseAdapter(ctx))
+
 	hostName := os.Getenv("HOST_NAME")
 	senderMail := os.Getenv("SENDER_MAIL")
 	password := os.Getenv("SMTP_PASSWORD")
 	domain.InitEmailRepository(infrastructure.NewSmtpAdapter(hostName, senderMail, password))
 	r := initRouter()
-
-	port := os.Getenv("PORT")
+	port := ":" + os.Getenv("PORT")
+	fmt.Println("Starting app with port", port)
 	http.ListenAndServe(port, r)
 
 }

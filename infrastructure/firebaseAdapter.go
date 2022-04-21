@@ -45,7 +45,7 @@ func NewFirebaseAdapter(ctx context.Context) *firebaseAdapter {
 		err = fmt.Errorf("Error creating client: %v", err)
 		fmt.Println(err)
 	}
-
+	fmt.Println("Created firebase client")
 	return &firebaseAdapter{client: client}
 }
 
