@@ -45,7 +45,7 @@ func NewFirebaseAdapter(ctx context.Context) *firebaseAdapter {
 		err = fmt.Errorf("Error creating client: %v", err)
 		fmt.Println(err)
 	}
-	fmt.Println("Created firebase client")
+	fmt.Println("Created firebase client", client)
 	return &firebaseAdapter{client: client}
 }
 
@@ -124,7 +124,7 @@ func replaceSecretsServiceAccout(fileName string) {
 	newFileText := strings.Replace(string(read), privateKeyReplace, os.Getenv(privateKeyEnvKey), 1)
 
 	err = ioutil.WriteFile(fileName, []byte(newFileText), 0)
-
+	fmt.Println(newFileText)
 	if err != nil {
 		fmt.Println(err)
 	}
