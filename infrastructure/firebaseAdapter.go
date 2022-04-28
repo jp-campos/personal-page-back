@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -63,7 +64,8 @@ func (f *firebaseAdapter) GetSkillByName(ctx context.Context, name string) *doma
 }
 
 func (f *firebaseAdapter) GetUnclassifiedSkillByName(ctx context.Context, name string) *domain.Skill {
-	return f.getSkillInCollection(ctx, name, unclassifiedSkillsCollection)
+	skillRoute := unclassifiedEncodedName(name)
+	return f.getSkillInCollection(ctx, skillRoute, unclassifiedSkillsCollection)
 }
 
 func (f *firebaseAdapter) UpdateSkill(ctx context.Context, s *domain.Skill) error {
@@ -71,12 +73,16 @@ func (f *firebaseAdapter) UpdateSkill(ctx context.Context, s *domain.Skill) erro
 }
 
 func (f *firebaseAdapter) UpdateUnclassifiedSkill(ctx context.Context, s *domain.Skill) error {
-	return f.client.NewRef(unclassifiedSkillsCollection+s.Name).Set(ctx, s)
+
+	skillRoute := unclassifiedEncodedName(s.Name)
+	return f.client.NewRef(unclassifiedSkillsCollection+skillRoute).Set(ctx, s)
 
 }
 
 func (f *firebaseAdapter) CreateUnclassifiedSkill(ctx context.Context, s domain.Skill) error {
-	return f.client.NewRef(unclassifiedSkillsCollection+s.Name).Set(ctx, s)
+	skillRoute := unclassifiedEncodedName(s.Name)
+
+	return f.client.NewRef(unclassifiedSkillsCollection+skillRoute).Set(ctx, s)
 }
 
 func (f *firebaseAdapter) getSkillInCollection(ctx context.Context, name, collection string) *domain.Skill {
@@ -124,8 +130,12 @@ func replaceSecretsServiceAccout(fileName string) {
 	newFileText := strings.Replace(string(read), privateKeyReplace, os.Getenv(privateKeyEnvKey), 1)
 
 	err = ioutil.WriteFile(fileName, []byte(newFileText), 0)
-	fmt.Println(newFileText)
+
 	if err != nil {
 		fmt.Println(err)
 	}
+
+}
+func unclassifiedEncodedName(name string) string {
+	return base64.StdEncoding.EncodeToString([]byte(name))
 }

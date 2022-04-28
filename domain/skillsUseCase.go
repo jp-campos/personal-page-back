@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"strings"
 )
 
@@ -65,6 +66,11 @@ func incrementUnclassifiedSkill(ctx context.Context, name string) (Skill, error)
 	} else {
 		skill.Count++
 		err = skillRepo.UpdateUnclassifiedSkill(ctx, skill)
+
+	}
+
+	if err != nil {
+		fmt.Print(err)
 	}
 	return *skill, err
 }
