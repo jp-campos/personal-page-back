@@ -60,6 +60,7 @@ func incrementUnclassifiedSkill(ctx context.Context, name string) (Skill, error)
 	if skill == nil {
 		newSkill := Skill{Name: upperCaseName, Count: 1}
 		err = skillRepo.CreateUnclassifiedSkill(ctx, newSkill)
+		skill = &newSkill
 
 	} else {
 		skill.Count++
