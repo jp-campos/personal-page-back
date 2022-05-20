@@ -47,7 +47,7 @@ func PostSkill(w http.ResponseWriter, req *http.Request) {
 	s, err := domain.IncrementSkill(req.Context(), m["skill"])
 
 	if err != nil {
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		json.NewEncoder(w).Encode(s)
 	}

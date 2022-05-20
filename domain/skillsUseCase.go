@@ -14,12 +14,12 @@ func InitSkillRepository(repo SkillGateWay) {
 
 func GetSkills(ctx context.Context) []Skill {
 
-	return skillRepo.GetSkills(ctx)
+	return skillRepo.Skills(ctx)
 }
 
 func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 
-	allSkills := skillRepo.GetSkills(ctx)
+	allSkills := skillRepo.Skills(ctx)
 	filteredSkills := make([]Skill, 0)
 
 	for _, e := range allSkills {
@@ -39,7 +39,7 @@ func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 
 func IncrementSkill(ctx context.Context, name string) (Skill, error) {
 
-	skill := skillRepo.GetSkillByName(ctx, name)
+	skill := skillRepo.SkillByName(ctx, name)
 
 	var err error
 	if skill == nil {
@@ -55,7 +55,7 @@ func IncrementSkill(ctx context.Context, name string) (Skill, error) {
 func incrementUnclassifiedSkill(ctx context.Context, name string) (Skill, error) {
 
 	upperCaseName := strings.ToUpper(name)
-	skill := skillRepo.GetUnclassifiedSkillByName(ctx, upperCaseName)
+	skill := skillRepo.UnclassifiedSkillByName(ctx, upperCaseName)
 
 	var err error
 	if skill == nil {

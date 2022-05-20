@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"sync"
 )
@@ -19,20 +18,19 @@ func InitEmailRepository(repo EmailGateWay) {
 }
 
 func SendMail(ctx context.Context, email Email) {
-	fmt.Println("Posting email usecase")
 	wg.Add(2)
 	//Send email to self
 	go func() {
-
+		defer wg.Done()
 		email.To = os.Getenv(PERSONAL_MAIL)
 		email.Subject = "Mail from personal page from: " + email.From
 
 		emailRepo.SendEmail(email)
-		wg.Done()
+
 	}()
 	//Send confirmation email to sender
 	go func() {
-
+		defer wg.Done()
 		var confirmationEmail = Email{
 			From:    os.Getenv(SENDER_EMAIL),
 			To:      email.From,
@@ -43,7 +41,6 @@ func SendMail(ctx context.Context, email Email) {
 
 		emailRepo.SendEmail(confirmationEmail)
 
-		wg.Done()
 	}()
 
 	wg.Wait()

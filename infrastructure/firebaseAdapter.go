@@ -50,7 +50,7 @@ func NewFirebaseAdapter(ctx context.Context) *firebaseAdapter {
 	return &firebaseAdapter{client: client}
 }
 
-func (f *firebaseAdapter) GetSkills(ctx context.Context) []domain.Skill {
+func (f *firebaseAdapter) Skills(ctx context.Context) []domain.Skill {
 
 	m := make(firebaseSkills)
 
@@ -59,11 +59,11 @@ func (f *firebaseAdapter) GetSkills(ctx context.Context) []domain.Skill {
 	return mapToSkillArray(m)
 }
 
-func (f *firebaseAdapter) GetSkillByName(ctx context.Context, name string) *domain.Skill {
+func (f *firebaseAdapter) SkillByName(ctx context.Context, name string) *domain.Skill {
 	return f.getSkillInCollection(ctx, name, skillsCollection)
 }
 
-func (f *firebaseAdapter) GetUnclassifiedSkillByName(ctx context.Context, name string) *domain.Skill {
+func (f *firebaseAdapter) UnclassifiedSkillByName(ctx context.Context, name string) *domain.Skill {
 	skillRoute := unclassifiedEncodedName(name)
 	return f.getSkillInCollection(ctx, skillRoute, unclassifiedSkillsCollection)
 }
