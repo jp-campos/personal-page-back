@@ -21,7 +21,7 @@ func NewSmtpAdapter(hostName, from, password string) (s SmtpAdapter) {
 }
 
 func (s SmtpAdapter) SendEmail(email domain.Email) {
-	fmt.Println("Send email in adapter")
+
 	msg := fmt.Sprintf("To: %s\r\n"+
 		"Subject:%s\r\n"+
 		"\r\n"+
