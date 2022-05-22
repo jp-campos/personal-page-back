@@ -3,46 +3,52 @@ package domain
 import (
 	"context"
 	"os"
-	"sync"
+
+	"golang.org/x/sync/errgroup"
 )
 
 var emailRepo EmailGateWay
 
-var wg sync.WaitGroup
 
-const PERSONAL_MAIL = "PERSONAL_MAIL"
-const SENDER_EMAIL = "SENDER_EMAIL"
+const (
+	PERSONAL_MAIL_KEY = "PERSONAL_MAIL"
+	SENDER_EMAIL_KEY = "SENDER_EMAIL"
+)
+
 
 func InitEmailRepository(repo EmailGateWay) {
 	emailRepo = repo
 }
 
-func SendMail(ctx context.Context, email Email) {
-	wg.Add(2)
+func SendMail(ctx context.Context, email Email) error{
+
+	errs, ctx := errgroup.WithContext(ctx)
+	
 	//Send email to self
-	go func() {
-		defer wg.Done()
-		email.To = os.Getenv(PERSONAL_MAIL)
+	errs.Go(
+		 func() error{
+		
+		email.To =  os.Getenv(PERSONAL_MAIL_KEY)
 		email.Subject = "Mail from personal page from: " + email.From
 
-		emailRepo.SendEmail(email)
+		return emailRepo.SendEmail(email)
 
-	}()
+	})
 	//Send confirmation email to sender
-	go func() {
-		defer wg.Done()
+	errs.Go(func() error {
+	
 		var confirmationEmail = Email{
-			From:    os.Getenv(SENDER_EMAIL),
+			From:    os.Getenv(SENDER_EMAIL_KEY),
 			To:      email.From,
 			Subject: "Thank you for contacting me!: " + email.From,
 			Body: "This email is a confirmation that I have received your email!" +
-				"\nThis is an automatically sent email, please contact me at " + os.Getenv(PERSONAL_MAIL) + "\n\n" +
+				"\nThis is an automatically sent email, please contact me at " + os.Getenv(PERSONAL_MAIL_KEY) + "\n\n" +
 				"Kind Regards"}
 
-		emailRepo.SendEmail(confirmationEmail)
+		return emailRepo.SendEmail(confirmationEmail)
 
-	}()
+	})
 
-	wg.Wait()
+	return errs.Wait()
 
 }

@@ -20,8 +20,8 @@ func NewSmtpAdapter(hostName, from, password string) (s SmtpAdapter) {
 	return SmtpAdapter{auth: auth, hostName: hostName, from: from, password: password}
 }
 
-func (s SmtpAdapter) SendEmail(email domain.Email) {
-
+func (s SmtpAdapter) SendEmail(email domain.Email) error {
+	
 	msg := fmt.Sprintf("To: %s\r\n"+
 		"Subject:%s\r\n"+
 		"\r\n"+
@@ -29,8 +29,6 @@ func (s SmtpAdapter) SendEmail(email domain.Email) {
 	byteMsg := []byte(msg)
 
 	err := smtp.SendMail(s.hostName+":587", s.auth, s.from, []string{email.To}, byteMsg)
-	if err != nil {
-		fmt.Println(err)
-	}
+	return err
 
 }

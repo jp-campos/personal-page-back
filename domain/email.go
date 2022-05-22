@@ -8,5 +8,5 @@ type Email struct {
 }
 
 type EmailGateWay interface {
-	SendEmail(email Email)
+	SendEmail(email Email) error
 }
