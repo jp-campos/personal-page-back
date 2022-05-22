@@ -20,7 +20,7 @@ func GetSkills(ctx context.Context) []Skill {
 func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 
 	allSkills := skillRepo.Skills(ctx)
-	filteredSkills := make([]Skill, 0)
+	var filteredSkills []Skill
 
 	for _, e := range allSkills {
 		if len(filteredSkills) == 5 {
