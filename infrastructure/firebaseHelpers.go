@@ -10,7 +10,7 @@ import (
 )
 
 func mapToSkillArray(values firebaseSkills) []domain.Skill {
-	array := make([]domain.Skill, 0)
+	 var array []domain.Skill
 
 	for _, v := range values {
 
