@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	ProjectIdKey                 = "FIREBASE_PROJECT_ID"
 	skillsCollection             = "/skills/"
 	unclassifiedSkillsCollection = "/unclassified-skills/"
 )

@@ -11,8 +11,8 @@ var emailRepo EmailGateWay
 
 
 const (
-	PERSONAL_MAIL_KEY = "PERSONAL_MAIL"
-	SENDER_EMAIL_KEY = "SENDER_EMAIL"
+	personalMailKey = "PERSONAL_MAIL"
+	senderEmailKey = "SENDER_EMAIL"
 )
 
 
@@ -28,7 +28,7 @@ func SendMail(ctx context.Context, email Email) error{
 	errs.Go(
 		 func() error{
 		
-		email.To =  os.Getenv(PERSONAL_MAIL_KEY)
+		email.To =  os.Getenv(personalMailKey)
 		email.Subject = "Mail from personal page from: " + email.From
 
 		return emailRepo.SendEmail(email)
@@ -38,11 +38,11 @@ func SendMail(ctx context.Context, email Email) error{
 	errs.Go(func() error {
 	
 		var confirmationEmail = Email{
-			From:    os.Getenv(SENDER_EMAIL_KEY),
+			From:    os.Getenv(senderEmailKey),
 			To:      email.From,
 			Subject: "Thank you for contacting me!: " + email.From,
 			Body: "This email is a confirmation that I have received your email!" +
-				"\nThis is an automatically sent email, please contact me at " + os.Getenv(PERSONAL_MAIL_KEY) + "\n\n" +
+				"\nThis is an automatically sent email, please contact me at " + os.Getenv(personalMailKey) + "\n\n" +
 				"Kind Regards"}
 
 		return emailRepo.SendEmail(confirmationEmail)
