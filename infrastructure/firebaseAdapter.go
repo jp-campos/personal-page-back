@@ -56,11 +56,11 @@ func (f *firebaseAdapter) Skills(ctx context.Context) []domain.Skill {
 	return mapToSkillArray(*m)
 }
 
-func (f *firebaseAdapter) SkillByName(ctx context.Context, name string) *domain.Skill {
+func (f *firebaseAdapter) SkillByName(ctx context.Context, name string) (*domain.Skill, error) {
 	return f.getSkillInCollection(ctx, name, skillsCollection)
 }
 
-func (f *firebaseAdapter) UnclassifiedSkillByName(ctx context.Context, name string) *domain.Skill {
+func (f *firebaseAdapter) UnclassifiedSkillByName(ctx context.Context, name string) (*domain.Skill, error) {
 	skillRoute := unclassifiedEncodedName(name)
 	return f.getSkillInCollection(ctx, skillRoute, unclassifiedSkillsCollection)
 }
@@ -82,16 +82,18 @@ func (f *firebaseAdapter) CreateUnclassifiedSkill(ctx context.Context, s domain.
 	return f.client.NewRef(unclassifiedSkillsCollection+skillRoute).Set(ctx, s)
 }
 
-func (f *firebaseAdapter) getSkillInCollection(ctx context.Context, name, collection string) *domain.Skill {
+func (f *firebaseAdapter) getSkillInCollection(ctx context.Context, name, collection string) (*domain.Skill, error) {
 
 	m := make(map[string]interface{})
-	f.client.NewRef(collection+name).Get(ctx, &m)
+	err := f.client.NewRef(collection+name).Get(ctx, &m)
 
+	if err != nil {
+		return nil, err
+	}
 	if m == nil || len(m) == 0 {
-		return nil
+		return nil, nil
 	} else {
 		skill := mapSingleSkill(m)
-		return &skill
+		return &skill, nil
 	}
 }
-

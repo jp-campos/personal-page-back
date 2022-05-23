@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"strings"
 )
 
@@ -20,7 +19,7 @@ func GetSkills(ctx context.Context) []Skill {
 func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 
 	allSkills := skillRepo.Skills(ctx)
-	var filteredSkills []Skill
+	filteredSkills := make([]Skill, 0, 5)
 
 	for _, e := range allSkills {
 		if len(filteredSkills) == 5 {
@@ -39,9 +38,11 @@ func GetSkillsStartingWith(ctx context.Context, prefix string) []Skill {
 
 func IncrementSkill(ctx context.Context, name string) (Skill, error) {
 
-	skill := skillRepo.SkillByName(ctx, name)
+	skill, err := skillRepo.SkillByName(ctx, name)
 
-	var err error
+	if err != nil {
+		return Skill{}, err
+	}
 	if skill == nil {
 		return incrementUnclassifiedSkill(ctx, name)
 	} else {
@@ -55,9 +56,12 @@ func IncrementSkill(ctx context.Context, name string) (Skill, error) {
 func incrementUnclassifiedSkill(ctx context.Context, name string) (Skill, error) {
 
 	upperCaseName := strings.ToUpper(name)
-	skill := skillRepo.UnclassifiedSkillByName(ctx, upperCaseName)
+	skill, err := skillRepo.UnclassifiedSkillByName(ctx, upperCaseName)
 
-	var err error
+	if err != nil {
+		return Skill{}, err
+	}
+
 	if skill == nil {
 		newSkill := Skill{Name: upperCaseName, Count: 1}
 		err = skillRepo.CreateUnclassifiedSkill(ctx, newSkill)
@@ -69,8 +73,5 @@ func incrementUnclassifiedSkill(ctx context.Context, name string) (Skill, error)
 
 	}
 
-	if err != nil {
-		fmt.Print(err)
-	}
 	return *skill, err
 }
